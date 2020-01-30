@@ -55,6 +55,7 @@ bot.hears('!unmute', async (ctx) => {
 bot.command('chatid', (ctx) => ctx.reply(ctx.chat.id))
 
 bot.on('new_chat_members', async (ctx) => {
+  console.log(ctx.update.message.from.id, ctx.update.message.from.first_name)
   try {
     if (!data.chats.includes(ctx.chat.id)) {
       return 
@@ -67,13 +68,14 @@ bot.on('new_chat_members', async (ctx) => {
     }
   
     await functions.punishUser(ctx, null, 'restrictChatMember')
-  
+
+    const user = ctx.update.message.from
     await ctx.reply(
-      text.hello, 
+      text.hello.replace('%link%', `<a href="tg://user?id=${user.id}">${user.first_name}</a>`),
       Extra.markup(Markup.inlineKeyboard([
         [Markup.urlButton('📖 Правила', 'https://teletype.in/@ramziddin/BkF3SRwoB')],
         [Markup.callbackButton('✅ Прочитал, согласен', `accept_${userId}`)]
-      ]))
+      ])).HTML()
     )
   } catch (err) {
     console.log(err)
@@ -81,12 +83,13 @@ bot.on('new_chat_members', async (ctx) => {
 })
 
 bot.action(/accept_[0-9]/, async (ctx) => {
+  console.log(ctx.update)
   const requiredId = +ctx.update.callback_query.data.substr(7)
   const userId = ctx.update.callback_query.from.id
 
   try {
     if (userId === requiredId) {
-      await functions.unMuteUser(userId)
+      await functions.unMuteUser(ctx)
       await ctx.answerCbQuery(text.welcAgain, true)
       await ctx.deleteMessage()
       await ctx.db.collection('oldUsers').updateOne(

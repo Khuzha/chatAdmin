@@ -75,22 +75,26 @@ let punishUser = async (ctx, date, command) => {
 }
 
 let unMuteUser = async (ctx) => {
-  const userId = ctx.message.reply_to_message.from.id
+  const userId = ctx.message ? ctx.message.reply_to_message.from.id : ctx.update.callback_query.from.id
+
   for (let chatId of data.chats) {
-    await telegram.restrictChatMember(chatId, userId, { 
+    await telegram.restrictChatMember(chatId, userId, {
       can_send_messages: true, can_send_media_messages: true,
       can_send_polls: true, can_send_other_messages: true,
       can_add_web_page_previews: true, can_invite_users: true
     })
   }
 
-  await telegram.deleteMessage(ctx.chat.id, ctx.message.message_id)
-  await ctx.reply(
-    `Пользователю <a href="tg://user?id=${userId}">${ctx.message.reply_to_message.from.first_name}</a> ` +
-    `предоставлен доступ писать во всех чатах ` + 
-    `по команде админа <a href="tg://user?id=${ctx.from.id}">${ctx.from.first_name}</a>.`,
-     Extra.HTML()
-  )
+  if (ctx.message) {
+    await telegram.deleteMessage(ctx.chat.id, ctx.message.message_id)
+    await ctx.reply(
+      `Пользователю <a href="tg://user?id=${userId}">${ctx.message.reply_to_message.from.first_name}</a> ` +
+      `предоставлен доступ писать во всех чатах ` + 
+      `по команде админа <a href="tg://user?id=${ctx.from.id}">${ctx.from.first_name}</a>.`,
+       Extra.HTML()
+    )
+  }
+
 
   
 }
