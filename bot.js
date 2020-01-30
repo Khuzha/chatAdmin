@@ -125,7 +125,7 @@ bot.hears('!src', (ctx) => {
     Extra.markup(Markup.inlineKeyboard(
       [Markup.urlButton('⌨️ GitHub', 'https://github.com/khuzha/chatadmin')]
     ))
-    .inReplyTo(ctx.message.message_id)
+    .inReplyTo(ctx.message.message_id).HTML()
     )
 })
 

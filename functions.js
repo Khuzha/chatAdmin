@@ -15,10 +15,10 @@ let getDate = (str) => {
 }
 
 let checkConds = async (ctx) => {
-  // if (!data.chats.includes(ctx.chat.id)) {
-  //   ctx.reply('Привет! Я работаю в чате @progersuz и его ветвях.')
-  //   return true
-  // }
+  if (!data.chats.includes(ctx.chat.id)) {
+    ctx.reply('Привет! Я работаю в чате @progersuz и его ветвях.')
+    return true
+  }
 
   if (!("reply_to_message" in ctx.message)) {
     ctx.reply('Сделай реплай, кого имеешь в виду.')
