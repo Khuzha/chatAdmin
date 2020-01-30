@@ -119,6 +119,16 @@ bot.hears('!help', (ctx) => {
   ctx.reply(text.help, Extra.inReplyTo(ctx.message.message_id).HTML())
 })
 
+bot.hears('!src', (ctx) => {
+  ctx.reply(
+    text.src,
+    Extra.markup(Markup.inlineKeyboard(
+      [Markup.urlButton('⌨️ GitHub', 'https://github.com/khuzha/chatadmin')]
+    ))
+    .inReplyTo(ctx.message.message_id)
+    )
+})
+
 bot.on('message', (ctx) => {
   if (ctx.chat.type === 'private') {
     ctx.reply('Привет! Я работаю только в чате @progersuz и его ветвях.')
