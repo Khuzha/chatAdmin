@@ -18,7 +18,7 @@ mongo.connect(data.mongoLink, { useUnifiedTopology: true }, (err, client) => {
 })
 
 
-bot.hears(/^!ban [0-9]{0,3}[mhdw]{0,1}$/i, async (ctx) => {
+bot.hears(/^!ban [0-9]{1,3}[mhdw]{1}$/i, async (ctx) => {
   if (await functions.checkConds(ctx)) {
     return
   }
@@ -28,7 +28,7 @@ bot.hears(/^!ban [0-9]{0,3}[mhdw]{0,1}$/i, async (ctx) => {
   await functions.punishUser(ctx, date, 'kickChatMember')
 })
 
-bot.hears(/^!mute [0-9]{0,3}[mhdw]{0,1}.*$/i, async (ctx) => {
+bot.hears(/^!mute [0-9]{1,3}[mhdw]{1}.*$/i, async (ctx) => {
   try {
     if (await functions.checkConds(ctx)) {
       return
@@ -55,7 +55,6 @@ bot.hears('!unmute', async (ctx) => {
 bot.command('chatid', (ctx) => ctx.reply(ctx.chat.id))
 
 bot.on('new_chat_members', async (ctx) => {
-  console.log(ctx.update.message.from.id, ctx.update.message.from.first_name)
   try {
     if (!data.chats.includes(ctx.chat.id)) {
       return 
@@ -83,7 +82,6 @@ bot.on('new_chat_members', async (ctx) => {
 })
 
 bot.action(/accept_[0-9]/, async (ctx) => {
-  console.log(ctx.update)
   const requiredId = +ctx.update.callback_query.data.substr(7)
   const userId = ctx.update.callback_query.from.id
 
