@@ -102,37 +102,57 @@ bot.action(/accept_[0-9]/, async (ctx) => {
   
 })
 
-bot.hears(/правила/i, (ctx) => {
-  ctx.reply(
-    text.rules, 
-    Extra.markup(Markup.inlineKeyboard(
-      [Markup.urlButton('📖 Правила', 'https://teletype.in/@ramziddin/BkF3SRwoB')]
-    ))
-    .inReplyTo(ctx.message.message_id)
-  )
-})
-
-bot.hears('!dev', (ctx) => {
-  ctx.reply(text.dev, Extra.inReplyTo(ctx.message.message_id))
-})
-
-bot.hears('!help', (ctx) => {
-  ctx.reply(text.help, Extra.inReplyTo(ctx.message.message_id).HTML())
-})
-
-bot.hears('!src', (ctx) => {
-  ctx.reply(
-    text.src,
-    Extra.markup(Markup.inlineKeyboard(
-      [Markup.urlButton('⌨️ GitHub', 'https://github.com/khuzha/chatadmin')]
-    ))
-    .inReplyTo(ctx.message.message_id).HTML()
+bot.hears(/правила/i, async (ctx) => {
+  try {
+    ctx.reply(
+      text.rules, 
+      Extra.markup(Markup.inlineKeyboard(
+        [Markup.urlButton('📖 Правила', 'https://teletype.in/@ramziddin/BkF3SRwoB')]
+      ))
+      .inReplyTo(ctx.message.message_id)
     )
+  } catch (err) {
+    console.log(err)
+  }
 })
 
-bot.on('message', (ctx) => {
-  if (ctx.chat.type === 'private') {
-    ctx.reply('Привет! Я работаю только в чате @progersuz и его ветвях.')
+bot.hears('!dev', async (ctx) => {
+  try {
+    await ctx.reply(text.dev, Extra.inReplyTo(ctx.message.message_id))
+  } catch (err) {
+    console.log(err)
+  }
+})
+
+bot.hears('!help', async (ctx) => {
+  try {
+    await ctx.reply(text.help, Extra.inReplyTo(ctx.message.message_id).HTML())
+  } catch (err) {
+    console.log(err)
+  }
+})
+
+bot.hears('!src', async (ctx) => {
+  try {
+    await ctx.reply(
+      text.src,
+      Extra.markup(Markup.inlineKeyboard(
+        [Markup.urlButton('⌨️ GitHub', 'https://github.com/khuzha/chatadmin')]
+      ))
+      .inReplyTo(ctx.message.message_id).HTML()
+    )
+  } catch (err) {
+    console.log(err)
+  }
+})
+
+bot.on('message', async (ctx) => {
+  try {
+    if (ctx.chat.type === 'private') {
+      await ctx.reply('Привет! Я работаю только в чате @progersuz и его ветвях.')
+    }
+  } catch (err) {
+    console.log(err)
   }
 })
 
