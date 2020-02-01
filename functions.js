@@ -111,10 +111,14 @@ let unMuteUser = async (ctx) => {
 let sendError = async (err, ctx) => {
   try {
     console.log(err)
+    
+    const preText = ctx ? 
+      `<b>Ошибка у пользователя</b> <a href="tg://user?id=${ctx.from.id}">${ctx.from.first_name}</a>:` :
+      `<b>Ошибка при подключении к БД:</b>`
+    
     await telegram.sendMessage(
       data.devId, 
-      `Ошибка у пользователя <a href="tg://user?id=${ctx.from.id}">${ctx.from.first_name}</a>: ` +
-      `<b>${err.toString()}.</b> \n\nПолная ошибка: \n${JSON.stringify(err)}`,
+      `${preText} <code>${err.toString()}.</code> \n\n<b>Полная ошибка:</b> \n${JSON.stringify(err)}`,
       Extra.HTML()
     )
   } catch (err) {

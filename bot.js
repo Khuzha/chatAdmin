@@ -10,7 +10,7 @@ const Markup = require('telegraf/markup')
 
 mongo.connect(data.mongoLink, { useUnifiedTopology: true }, (err, client) => {
   if (err) {
-    functions.sendError(err, ctx)
+    return functions.sendError(err)
   }
 
   bot.context.db = client.db('chatAdmin')
@@ -146,12 +146,13 @@ bot.hears('!src', async (ctx) => {
   }
 })
 
+bot.hears('!chatid', (ctx) => ctx.reply(ctx.chat.id))
+
 bot.on('message', async (ctx) => {
   try {
     if (ctx.chat.type === 'private') {
       await ctx.reply('Привет! Я работаю только в чате @progersuz и его ветвях.')
     }
-    await telegram.sendMessage(1, 1)
   } catch (err) {
     functions.sendError(err, ctx)
   }
