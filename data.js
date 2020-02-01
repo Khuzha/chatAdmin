@@ -1,9 +1,10 @@
 module.exports = {
 
   token: 'token',
-  mongoLink: 'link to MongoDB server',
+  mongoLink: 'link to connect to MongoDB server',
   chats: [1, 2, 3], // your chats
   botId: 123, // bot id
+  devId: 456,
 
   time: {
     m: 60,

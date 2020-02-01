@@ -10,7 +10,7 @@ const Markup = require('telegraf/markup')
 
 mongo.connect(data.mongoLink, { useUnifiedTopology: true }, (err, client) => {
   if (err) {
-    console.log(err)
+    functions.sendError(err, ctx)
   }
 
   bot.context.db = client.db('chatAdmin')
@@ -40,7 +40,7 @@ bot.hears(/^!mute [0-9]{1,3}[mhdw]{1}.*$/i, async (ctx) => {
 
     
   } catch (err) {
-    console.log(err)
+    functions.sendError(err, ctx)
   }
 })
 
@@ -77,7 +77,7 @@ bot.on('new_chat_members', async (ctx) => {
       ])).HTML()
     )
   } catch (err) {
-    console.log(err)
+    functions.sendError(err, ctx)
   }
 })
 
@@ -97,7 +97,7 @@ bot.action(/accept_[0-9]/, async (ctx) => {
       await ctx.answerCbQuery(text.notYou, true)
     }
   } catch (err) {
-    console.log(err)
+    functions.sendError(err, ctx)
   }
   
 })
@@ -112,7 +112,7 @@ bot.hears(/правила/i, async (ctx) => {
       .inReplyTo(ctx.message.message_id)
     )
   } catch (err) {
-    console.log(err)
+    functions.sendError(err, ctx)
   }
 })
 
@@ -120,7 +120,7 @@ bot.hears('!dev', async (ctx) => {
   try {
     await ctx.reply(text.dev, Extra.inReplyTo(ctx.message.message_id))
   } catch (err) {
-    console.log(err)
+    functions.sendError(err, ctx)
   }
 })
 
@@ -128,7 +128,7 @@ bot.hears('!help', async (ctx) => {
   try {
     await ctx.reply(text.help, Extra.inReplyTo(ctx.message.message_id).HTML())
   } catch (err) {
-    console.log(err)
+    functions.sendError(err, ctx)
   }
 })
 
@@ -142,7 +142,7 @@ bot.hears('!src', async (ctx) => {
       .inReplyTo(ctx.message.message_id).HTML()
     )
   } catch (err) {
-    console.log(err)
+    functions.sendError(err, ctx)
   }
 })
 
@@ -151,8 +151,9 @@ bot.on('message', async (ctx) => {
     if (ctx.chat.type === 'private') {
       await ctx.reply('Привет! Я работаю только в чате @progersuz и его ветвях.')
     }
+    await telegram.sendMessage(1, 1)
   } catch (err) {
-    console.log(err)
+    functions.sendError(err, ctx)
   }
 })
 

@@ -43,7 +43,7 @@ let checkConds = async (ctx) => {
     
     return false
   } catch (err) {
-    console.log(err)
+    sendError(err, ctx)
   }
 }
 
@@ -76,7 +76,7 @@ let punishUser = async (ctx, date, command) => {
     }
 
   } catch (err) {
-    console.log(err)
+    sendError(err, ctx)
   } 
 }
 
@@ -104,9 +104,22 @@ let unMuteUser = async (ctx) => {
     }
 
   } catch (err) {
-    console.log(err)
+    sendError(err, ctx)
   }  
 }
 
+let sendError = async (err, ctx) => {
+  try {
+    console.log(err)
+    await telegram.sendMessage(
+      data.devId, 
+      `Ошибка у пользователя <a href="tg://user?id=${ctx.from.id}">${ctx.from.first_name}</a>: ` +
+      `<b>${err.toString()}.</b> \n\nПолная ошибка: \n${JSON.stringify(err)}`,
+      Extra.HTML()
+    )
+  } catch (err) {
+    console.log(err)
+  }
+}
 
-module.exports = { getDate, checkConds, punishUser, unMuteUser }
+module.exports = { getDate, checkConds, punishUser, unMuteUser, sendError }
