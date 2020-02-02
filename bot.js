@@ -157,6 +157,3 @@ bot.on('message', async (ctx) => {
     functions.sendError(err, ctx)
   }
 })
-
-
-bot.startPolling()
