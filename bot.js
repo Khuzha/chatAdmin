@@ -3,10 +3,18 @@ const mongo = require('mongodb').MongoClient
 const data = require('./data')
 const text = require('./text')
 const functions = require('./functions')
-const bot = new Telegraf(data.token)
-const { telegram } = bot
 const Extra = require('telegraf/extra')
 const Markup = require('telegraf/markup')
+const session = require('telegraf/session')
+const Stage = require('telegraf/stage')
+const publish = require('./publishScene')
+const stage = new Stage()
+const bot = new Telegraf(data.token)
+const { telegram } = bot
+
+stage.register(publish)
+bot.use(session())
+bot.use(stage.middleware())
 
 mongo.connect(data.mongoLink, { useUnifiedTopology: true }, (err, client) => {
   if (err) {
@@ -108,6 +116,19 @@ bot.action(/accept_[0-9]*_[0-9]*/, async (ctx) => {
   
 })
 
+bot.hears('!publ', async (ctx) => {
+  try {
+    const user = await telegram.getChatMember(data.chats[0], ctx.from.id)
+    if (!['creator', 'administrator'].includes(user.status)) {
+      return true
+    }
+
+    ctx.scene.enter('getMessage')
+  } catch (err) {
+    functions.sendError(err, ctx)
+  }
+})
+
 bot.hears(/правила/i, async (ctx) => {
   try {
     ctx.reply(
@@ -155,7 +176,6 @@ bot.hears('!src', async (ctx) => {
 bot.hears('!chatid', (ctx) => ctx.reply(ctx.chat.id))
 
 bot.on('message', async (ctx) => {
-  console.log('kek')
   try {
     if (ctx.chat.type === 'private') {
       await ctx.reply('Привет! Я работаю только в чате @progersuz и его ветвях.')
