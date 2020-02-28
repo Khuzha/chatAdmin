@@ -73,7 +73,7 @@ bot.on('new_chat_members', async (ctx) => {
       text.hello.replace('%link%', `<a href="tg://user?id=${user.id}">${user.first_name}</a>`),
       Extra.markup(Markup.inlineKeyboard([
         [Markup.urlButton('📖 Правила', 'https://teletype.in/@ramziddin/BkF3SRwoB')],
-        [Markup.callbackButton('✅ Прочитал, согласен', `accept_${userId}`)]
+        [Markup.callbackButton('✅ Прочитал, согласен', `accept_${userId}_${ctx.message.message_id}`)]
       ])).HTML()
     )
   } catch (err) {
@@ -81,15 +81,21 @@ bot.on('new_chat_members', async (ctx) => {
   }
 })
 
-bot.action(/accept_[0-9]/, async (ctx) => {
-  const requiredId = +ctx.update.callback_query.data.substr(7)
-  const userId = ctx.update.callback_query.from.id
+bot.action(/accept_[0-9]*_[0-9]*/, async (ctx) => {
+  const query = ctx.update.callback_query
+  const match = query.data.match(/_[0-9]*_[0-9]*/)[0].substr(1)
+  const requiredId = +match.substring(0, match.indexOf('_'))
+  const systemMessageId = +match.substr(match.indexOf('_') + 1)
+  const userId = query.from.id
+  console.log(requiredId, systemMessageId)
 
   try {
     if (userId === requiredId) {
       await functions.unMuteUser(ctx)
       await ctx.answerCbQuery(text.welcAgain, true)
       await ctx.deleteMessage()
+      await telegram.deleteMessage(ctx.chat.id, systemMessageId)
+      
       await ctx.db.collection('oldUsers').updateOne(
         { userId: userId }, { $set: { allowed: true } }, { new: true, upsert: true }
       )
@@ -149,6 +155,7 @@ bot.hears('!src', async (ctx) => {
 bot.hears('!chatid', (ctx) => ctx.reply(ctx.chat.id))
 
 bot.on('message', async (ctx) => {
+  console.log('kek')
   try {
     if (ctx.chat.type === 'private') {
       await ctx.reply('Привет! Я работаю только в чате @progersuz и его ветвях.')
