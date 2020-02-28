@@ -68,6 +68,7 @@ bot.on('new_chat_members', async (ctx) => {
       return 
     }
 
+    await ctx.deleteMessage()
     const userId = ctx.update.message.from.id
     const oldUser = await ctx.db.collection('oldUsers').findOne({ userId: userId })
     if (oldUser != null) {
@@ -81,7 +82,7 @@ bot.on('new_chat_members', async (ctx) => {
       text.hello.replace('%link%', `<a href="tg://user?id=${user.id}">${user.first_name}</a>`),
       Extra.markup(Markup.inlineKeyboard([
         [Markup.urlButton('📖 Правила', 'https://teletype.in/@ramziddin/BkF3SRwoB')],
-        [Markup.callbackButton('✅ Прочитал, согласен', `accept_${userId}_${ctx.message.message_id}`)]
+        [Markup.callbackButton('✅ Прочитал, согласен', `accept_${userId}`)]
       ])).HTML()
     )
   } catch (err) {
@@ -89,20 +90,16 @@ bot.on('new_chat_members', async (ctx) => {
   }
 })
 
-bot.action(/accept_[0-9]*_[0-9]*/, async (ctx) => {
+bot.action(/accept_[0-9]/, async (ctx) => {
   const query = ctx.update.callback_query
-  const match = query.data.match(/_[0-9]*_[0-9]*/)[0].substr(1)
-  const requiredId = +match.substring(0, match.indexOf('_'))
-  const systemMessageId = +match.substr(match.indexOf('_') + 1)
+  const requiredId = +query.data.match(/_[0-9]*/)[0].substr(1)
   const userId = query.from.id
-  console.log(requiredId, systemMessageId)
 
   try {
     if (userId === requiredId) {
       await functions.unMuteUser(ctx)
       await ctx.answerCbQuery(text.welcAgain, true)
       await ctx.deleteMessage()
-      await telegram.deleteMessage(ctx.chat.id, systemMessageId)
       
       await ctx.db.collection('oldUsers').updateOne(
         { userId: userId }, { $set: { allowed: true } }, { new: true, upsert: true }
