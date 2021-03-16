@@ -4,7 +4,8 @@
   "description": "chatAdmin",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon bot.js"
+    "dev": "nodemon bot.js",
+    "start": "node bot.js"
   },
   "repository": {
     "type": "git",
